@@ -66,3 +66,8 @@ curl http://127.0.0.1
 journalctl -u billiardo -f
 sudo tail -f /var/log/nginx/error.log
 ```
+
+## Vercel deployment
+
+For Vercel (API + frontend), see:
+- `deploy/VERCEL.md`
