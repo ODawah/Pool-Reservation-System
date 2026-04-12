@@ -30,7 +30,11 @@ async def list_revenues(db: Session = Depends(get_db)):
 async def create_revenue(
     source: str, amount: float, date: Optional[datetime] = None, db: Session = Depends(get_db)
 ):
-    revenue_record = revenue.Revenue(source=source, amount=amount, date=date or datetime.now())
+    revenue_record = revenue.Revenue(
+        source=source,
+        amount=amount,
+        date=date or datetime.now(),
+    )
     db.add(revenue_record)
     db.commit()
     return {"message": "Revenue record created successfully"}

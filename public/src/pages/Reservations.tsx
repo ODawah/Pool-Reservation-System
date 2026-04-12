@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { getTables } from '@/services/api';
 import { logout } from '@/lib/auth';
+import { formatDurationMinutes } from '@/lib/time';
 import type { TableInfo } from '@/types/pool-hall';
 import { CalendarClock, LayoutDashboard, LogOut, Trash2 } from 'lucide-react';
 
@@ -76,7 +77,7 @@ const Reservations = () => {
   const [tables, setTables] = useState<TableInfo[]>([]);
   const [loadingTables, setLoadingTables] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [reservations, setReservations] = useState<TableReservation[]>([]);
+  const [reservations, setReservations] = useState<TableReservation[]>(() => loadSavedReservations());
   const [filterTableId, setFilterTableId] = useState('all');
   const [filterFromTime, setFilterFromTime] = useState('');
   const [filterToTime, setFilterToTime] = useState('');
@@ -90,8 +91,8 @@ const Reservations = () => {
   });
 
   useEffect(() => {
-    setReservations(loadSavedReservations());
-  }, []);
+    saveReservations(reservations);
+  }, [reservations]);
 
   useEffect(() => {
     const loadTables = async () => {
@@ -205,11 +206,7 @@ const Reservations = () => {
       createdAt: new Date().toISOString(),
     };
 
-    setReservations((prev) => {
-      const next = [...prev, newReservation];
-      saveReservations(next);
-      return next;
-    });
+    setReservations((prev) => [...prev, newReservation]);
 
     setForm({
       tableId: '',
@@ -225,11 +222,7 @@ const Reservations = () => {
   };
 
   const handleDeleteReservation = (reservationId: string) => {
-    setReservations((prev) => {
-      const next = prev.filter((reservation) => reservation.id !== reservationId);
-      saveReservations(next);
-      return next;
-    });
+    setReservations((prev) => prev.filter((reservation) => reservation.id !== reservationId));
     toast({ title: 'Reservation removed' });
   };
 
@@ -421,7 +414,7 @@ const Reservations = () => {
 
                     <div className="text-sm space-y-1">
                       <p><span className="text-muted-foreground">Starts:</span> {formatDateTime(reservation.startsAt)}</p>
-                      <p><span className="text-muted-foreground">Duration:</span> {reservation.durationMinutes} minutes</p>
+                      <p><span className="text-muted-foreground">Duration:</span> {formatDurationMinutes(reservation.durationMinutes)}</p>
                       {reservation.phone && <p><span className="text-muted-foreground">Phone:</span> {reservation.phone}</p>}
                       {reservation.notes && <p><span className="text-muted-foreground">Notes:</span> {reservation.notes}</p>}
                     </div>

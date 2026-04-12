@@ -24,6 +24,8 @@ export interface TableSession {
   startTime: number | null;
   orders: OrderItem[];
   pricePerMinute: number;
+  carryOverCost: number;
+  carryOverItems: Record<string, number>;
 }
 
 export interface Employee {
